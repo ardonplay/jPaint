@@ -4,6 +4,9 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 
+import static java.lang.Math.*;
+
+
 public class DrawServiceImpl implements DrawService {
 
     private String mode;
@@ -73,62 +76,85 @@ public class DrawServiceImpl implements DrawService {
 
     @Override
     public void vuLine(Pair<Integer, Integer> firstPoint, Pair<Integer, Integer> secondPoint, Color color) {
-        int x1 = firstPoint.getKey();
-        int x2 = secondPoint.getKey();
-        int y1 = firstPoint.getValue();
-        int y2 = secondPoint.getValue();
+        int x0 = firstPoint.getKey();
+        int x1 = secondPoint.getKey();
+        int y0 = firstPoint.getValue();
+        int y1 = secondPoint.getValue();
 
-        if (x2 < x1) {
-            x1 += x2;
-            x2 = x1 - x2;
-            x1 -= x2;
-            y1 += y2;
-            y2 = y1 - y2;
-            y1 -= y2;
+        boolean steep = abs(y1 - y0) > abs(x1 - x0);
+        if (steep)
+           vuLine(new Pair<>(y0, x0), new Pair<>(y1, x1), color);
+
+        if (x0 > x1)
+            vuLine(new Pair<>(x1, y1), new Pair<>(x0, y0), color);
+
+        double dx = x1 - x0;
+        double dy = y1 - y0;
+        double gradient = dy / dx;
+
+        // handle first endpoint
+        double xend = round(x0);
+        double yend = y0 + gradient * (xend - x0);
+        double xgap = rfpart(x0 + 0.5);
+        double xpxl1 = xend; // this will be used in the main loop
+        double ypxl1 = ipart(yend);
+
+        if (steep) {
+            plot(ypxl1, xpxl1, rfpart(yend) * xgap, color);
+            plot(ypxl1 + 1, xpxl1, fpart(yend) * xgap, color);
+        } else {
+            plot(xpxl1, ypxl1, rfpart(yend) * xgap, color);
+            plot(xpxl1, ypxl1 + 1, fpart(yend) * xgap, color);
         }
 
-        int dx = x2 - x1;
-        int dy = y2 - y1;
+        // first y-intersection for the main loop
+        double intery = yend + gradient;
 
-        if (dx == 0 || dy == 0) {
-            drawLine(x1, y1, x2, y2, color);
-            return;
+        xend = round(x1);
+        yend = y1 + gradient * (xend - x1);
+        xgap = fpart(x1 + 0.5);
+        double xpxl2 = xend; // this will be used in the main loop
+        double ypxl2 = ipart(yend);
+
+        if (steep) {
+            plot(ypxl2, xpxl2, rfpart(yend) * xgap, color);
+            plot(ypxl2 + 1, xpxl2, fpart(yend) * xgap, color);
+        } else {
+            plot(xpxl2, ypxl2, rfpart(yend) * xgap, color);
+            plot(xpxl2, ypxl2 + 1, fpart(yend) * xgap, color);
         }
 
-        float gradient;
-
-        if (dx > dy) {
-            System.out.println("dx > dy");
-            gradient = (float) dy / dx;
-            float intery = y1 + gradient;
-            pixelWriter.setColor(x1, y1, color);
-            for (int x = x1; x < x2; ++x) {
-                pixelWriter.setColor(x, (int)intery, new Color(color.getRed(), color.getBlue(),color.getGreen(), (1 - fractionalPart(intery) * 1))); //Меняем прозрачность
-                pixelWriter.setColor(x, (int)intery + 1,new Color(color.getRed(), color.getBlue(),color.getGreen(),  fractionalPart(intery) * 1));
-                intery += gradient;
+        // main loop
+        for (double x = xpxl1 + 1; x <= xpxl2 - 1; x++) {
+            if (steep) {
+                plot(ipart(intery), x, rfpart(intery), color);
+                plot(ipart(intery) + 1, x, fpart(intery), color);
+            } else {
+                plot(x, ipart(intery), rfpart(intery), color);
+                plot(x, ipart(intery) + 1, fpart(intery), color);
             }
-            pixelWriter.setColor(x2, y2, color);
-        }
-        else {
-            System.out.println("dx < dy");
-            gradient = (float) dx / dy;
-            float interx = x1 + gradient;
-            pixelWriter.setColor(x1, y1, color);
-            for (int y = y1; y < y2; ++y) {
-                pixelWriter.setColor((int)interx, y, new Color(color.getRed(), color.getBlue(),color.getGreen(), (fractionalPart(interx) * 1)));
-                pixelWriter.setColor((int)interx + 1, y,new Color(color.getRed(), color.getBlue(),color.getGreen(), (fractionalPart(interx) * 1)));
-                interx += gradient;
-            }
-            pixelWriter.setColor(x2, y2, color);
+            intery = intery + gradient;
         }
 
     }
 
-    private float fractionalPart(float x) {
-        int tmp = (int) x;
-        return x - tmp;
+
+    int ipart(double x) {
+        return (int) x;
     }
 
+    double fpart(double x) {
+        return x - floor(x);
+    }
+
+    double rfpart(double x) {
+        return 1.0 - fpart(x);
+    }
+
+
+    void plot(double x, double y, double c, Color color) {
+        pixelWriter.setColor((int) x, (int) y, new Color(color.getRed(), color.getGreen(), color.getBlue(), c));
+    }
 
 
     private void drawLine(int x1, int y1, int x2, int y2, Color color) {
