@@ -20,13 +20,19 @@ ext {
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.ardonplay.paint.PaintApplication'
+    }
+}
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
 application {
     mainModule = 'io.github.ardonplay.paint'
-    mainClass = 'io.github.ardonplay.paint.HelloApplication'
+    mainClass = 'io.github.ardonplay.paint.PaintApplication'
 }
 
 javafx {
@@ -48,9 +54,15 @@ dependencies {
         exclude(group: 'org.openjfx')
     }
 
+    // https://mvnrepository.com/artifact/org.openjfx/javafx-swing
+    implementation 'org.openjfx:javafx-swing:23-ea+3'
+
+
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }
+
+mainClassName = 'io.github.ardonplay.paint.PaintApplication'
 
 test {
     useJUnitPlatform()
