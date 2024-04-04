@@ -10,7 +10,6 @@ public class BresenhamLineService extends AbstractDrawLineService {
 
     public BresenhamLineService(Canvas canvas) {
         super(canvas);
-        this.name = "Bresenham Line";
     }
 
     @Override

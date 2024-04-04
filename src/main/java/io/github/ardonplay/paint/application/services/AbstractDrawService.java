@@ -4,14 +4,10 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
 public abstract class AbstractDrawService implements DrawService {
-
-    @Getter
-    protected String name;
 
     protected final PixelWriter pixelWriter;
 

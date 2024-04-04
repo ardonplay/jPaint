@@ -10,7 +10,6 @@ public class BasicLineService extends AbstractDrawLineService {
 
     public BasicLineService(Canvas canvas) {
         super(canvas);
-        this.name = "BasicLine";
     }
 
     @Override

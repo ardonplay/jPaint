@@ -12,7 +12,6 @@ public class VuLineService extends AbstractDrawLineService {
 
     public VuLineService(Canvas canvas) {
         super(canvas);
-        this.name = "VuLine";
     }
 
     @Override
