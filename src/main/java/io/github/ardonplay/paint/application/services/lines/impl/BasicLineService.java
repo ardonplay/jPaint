@@ -1,9 +1,12 @@
 package io.github.ardonplay.paint.application.services.lines.impl;
 
+import io.github.ardonplay.paint.application.services.lines.AbstractDrawLineService;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component("BasicLine")
 public class BasicLineService extends AbstractDrawLineService {
@@ -13,7 +16,9 @@ public class BasicLineService extends AbstractDrawLineService {
     }
 
     @Override
-    public void drawObject(Pair<Integer, Integer> firstPoint, Pair<Integer, Integer> secondPoint, Color color) {
+    public void drawObject(List<Pair<Integer, Integer>> points, Color color) {
+        var firstPoint = points.get(0);
+        var secondPoint = points.get(1);
         int x1 = firstPoint.getKey();
         int x2 = secondPoint.getKey();
         int y1 = firstPoint.getValue();

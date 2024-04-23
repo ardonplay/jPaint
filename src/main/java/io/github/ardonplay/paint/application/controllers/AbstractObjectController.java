@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,12 +29,8 @@ public abstract class AbstractObjectController {
 
     protected final ColorPicker colorPicker;
     protected final ControllerHandler controllerHandler;
-    protected Pair<Integer, Integer> firstPoint;
-    protected Pair<Integer, Integer> secondPoint;
 
     protected Map<String, DrawService> values;
-
-    protected boolean tapped;
 
     @Getter
     protected final ObjectSelector selector;
@@ -66,19 +64,7 @@ public abstract class AbstractObjectController {
         this.canvas.setOnMousePressed(event -> drawObject(event, drawService));
     }
 
-    private void drawObject(MouseEvent event, DrawService drawService) {
-        int x = (int) event.getX();
-        int y = (int) event.getY();
-
-        if (!tapped) {
-            firstPoint = new Pair<>(x, y);
-            tapped = true;
-        } else {
-            secondPoint = new Pair<>(x, y);
-            drawService.drawObject(firstPoint, secondPoint, colorPicker.valueProperty().get());
-            tapped = false;
-        }
-    }
+    protected abstract void drawObject(MouseEvent event, DrawService drawService);
 
     public void unsubscribe() {
         selector.setValue(null);

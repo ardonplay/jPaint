@@ -1,7 +1,6 @@
-package io.github.ardonplay.paint.application.services.lines.impl;
+package io.github.ardonplay.paint.application.services.lines;
 
 import io.github.ardonplay.paint.application.services.AbstractDrawService;
-import io.github.ardonplay.paint.application.services.lines.DrawLineService;
 import javafx.scene.canvas.Canvas;
 
 public abstract class AbstractDrawLineService extends AbstractDrawService implements DrawLineService {

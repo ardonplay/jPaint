@@ -6,6 +6,8 @@ import javafx.scene.paint.Color;
 import javafx.util.Pair;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public abstract class AbstractDrawService implements DrawService {
 
@@ -16,7 +18,5 @@ public abstract class AbstractDrawService implements DrawService {
     }
 
     @Override
-    public void drawObject(Pair<Integer, Integer> firstPoint, Pair<Integer, Integer> secondPoint, Color color) {
-
-    }
+    public abstract void drawObject(List<Pair<Integer, Integer>> points, Color color);
 }
